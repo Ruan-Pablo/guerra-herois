@@ -43,7 +43,9 @@ class Heroi {
         this.xp += xp
     }
     decrementaXp(xp){
-        this.xp -= xp
+        if (this.xp >= 0){
+            this.xp -= xp
+        }
     }
     
     setVida(vida){
@@ -208,10 +210,11 @@ class Ninja extends Heroi{
 class Battle{
     constructor(rodadas, herois=[]){
         this.herois = herois // lista de herois
-        this.rodadas = rodadas*100
+        this.constante = 100
+        this.rodadas = rodadas*this.constante
         // Ganho XP
-        this.xp_ataque = 0
-        this.xp_esquiva = 0
+        this.xp_ataque = 2
+        this.xp_esquiva = 1
         this.xp_vitoria = 4
         this.xp_derrota = 2
         // herois
@@ -224,20 +227,14 @@ class Battle{
         // inicio da batalha
         console.log("Inicio da batalha")
 
-        for(let i = 0; i < this.rodadas; i++){
+        for(let i = 0; i < this.rodadas/this.constante; i++){
+            console.log(`Rodada ${i+1}`)
             this.todosContraTodos()
         }
         this.exibirFimBatalha()
     }
     
-    verificaEsquivou(){       // CHANCE DE ESQUIVA  
-        let chance_esquiva = Math.random()
-        if(chance_esquiva >= 0.3){ // esquivou
-            return true
-        }else{
-            return false
-        }
-    }
+
     
 
     // todos os batalhadores vão batalhar pelo menos 2 vezes com o mesmo heroi (revanche)
@@ -247,6 +244,7 @@ class Battle{
                 for(let h2 = 0; h2<this.herois.length; h2++){
                     if (h2 != h1){   // não pode lutar contra si propio
                         this.heroi2 = this.herois[h2]
+                        console.log(`${this.heroi1.nome} vs ${this.heroi2.nome}`)
                         this.heroi1.setVida(this.heroi1.vida_padrao)
                         this.heroi2.setVida(this.heroi2.vida_padrao)
                         this.lutar() 
@@ -283,6 +281,15 @@ class Battle{
             if(this.verificaMorteGanhador()){
                 break
             }
+        }
+    }
+
+    verificaEsquivou(){       // CHANCE DE ESQUIVA  
+        let chance_esquiva = Math.random()
+        if(chance_esquiva >= 0.3){ // esquivou
+            return true
+        }else{
+            return false
         }
     }
 
