@@ -8,6 +8,7 @@ class Heroi {
         this.vida = vida
         this.qtd_vitorias = 0
         this.qtd_derrotas = 0
+        this.ataquesEspecificos = {}; // objeto para armazenar ataques específicos
     }
 // gets
     exibirInfo(){
@@ -18,6 +19,7 @@ class Heroi {
         console.log("| Heroi: " + this.nome)
         console.log("| XP: " + this.xp)
         console.log("| Nivel: " + this.nivel)
+        console.log("| Saldo: " + (this.qtd_vitorias-this.qtd_derrotas))
         console.log("| Rank: " + rank)
         console.log("| Vida: " + this.vida)
         console.log("| Ataque: " + this.ataque)
@@ -31,8 +33,8 @@ class Heroi {
         return this.xp
     }
     
-    getAtacar() {
-        throw new Error("O método 'atacar' deve ser implementado pela classe derivada.");
+    getAtacar(tipo_heroi) {
+        return this.ataque;
     }
     
     getVida(){
@@ -106,104 +108,64 @@ class Heroi {
 }
 
 class Mago extends Heroi{
-    constructor(nome="Mago",guerreiro = 5, monje = 3, ninja = 7){
+    constructor(nome="Mago",guerreiro = 5, monge = 3, ninja = 7){
         super(nome)
         this.tipo = nome.toLowerCase()
-        this.ataque_guerreiro = guerreiro
-        this.ataque_monje = monje
-        this.ataque_ninja = ninja
+        this.tipo_ataque = "magia"
+        this.ataquesEspecificos = {
+            guerreiro: guerreiro,
+            monge: monge,
+            ninja: ninja,
+            mago: this.ataque // caso ataque outro mago
+        };
 
     }
-    getAtacar(tipo_heroi){
-        if (tipo_heroi === "mago"){
-            return this.ataque
-        } else if (tipo_heroi === "guerreiro"){
-            return this.ataque_guerreiro
-        } else if (tipo_heroi === "monje"){
-            return this.ataque_monje
-        } else if (tipo_heroi === "ninja"){
-            return this.ataque_ninja
-        } else { // so pra não quebrar
-            console.log("TIPO NAO RECONHECIDO!!")
-            return this.ataque
-        }
-    }
+
 }
 
 class Guerreiro extends Heroi{
-    constructor(nome="Guerreiro",mago = 3, monje = 5, ninja = 7){
+    constructor(nome="Guerreiro",mago = 3, monge = 5, ninja = 7){
         super(nome)
         this.tipo = nome.toLowerCase()
-        this.ataque_mago = mago
-        this.ataque_monje = monje
-        this.ataque_ninja = ninja
+        this.tipo_ataque = "espada"
+        this.ataquesEspecificos = {
+            mago: mago,
+            monge: monge,
+            ninja: ninja,
+            guerreiro: this.ataque // caso ataque outro guerreiro
+        };
+    }
 
-    }
-    getAtacar(tipo_heroi){
-        if (tipo_heroi === "mago"){
-            return this.ataque
-        } else if (tipo_heroi === "guerreiro"){
-            return this.ataque_guerreiro
-        } else if (tipo_heroi === "monje"){
-            return this.ataque_monje
-        } else if (tipo_heroi === "ninja"){
-            return this.ataque_ninja
-        } else { // so pra não quebrar
-            console.log("TIPO NAO RECONHECIDO!!")
-            return this.ataque
-        }
-    }
 }
 
 
-class Monje extends Heroi{
-    constructor(nome="Monje",guerreiro = 5, mago = 3, ninja = 7){
+class Monge extends Heroi{
+    constructor(nome="Monge",guerreiro = 5, mago = 3, ninja = 7){
         super(nome)
         this.tipo = nome.toLowerCase()
-        this.ataque_guerreiro = guerreiro
-        this.ataque_mago = mago
-        this.ataque_ninja = ninja
-
-    }
-    getAtacar(tipo_heroi){
-        if (tipo_heroi === "mago"){
-            return this.ataque
-        } else if (tipo_heroi === "guerreiro"){
-            return this.ataque_guerreiro
-        } else if (tipo_heroi === "monje"){
-            return this.ataque_monje
-        } else if (tipo_heroi === "ninja"){
-            return this.ataque_ninja
-        } else { // so pra não quebrar
-            console.log("TIPO NAO RECONHECIDO!!")
-            return this.ataque
-        }
+        this.tipo_ataque = "artes marciais"
+        this.ataquesEspecificos = {
+            guerreiro: guerreiro,
+            mago: mago,
+            ninja: ninja,
+            monge: this.ataque // caso ataque outro monge
+        };
     }
 }
 
 class Ninja extends Heroi{
-    constructor(nome="Ninja", guerreiro = 3, monje = 7, mago = 5){
+    constructor(nome="Ninja", guerreiro = 3, monge = 7, mago = 5){
         super(nome)
         this.tipo = nome.toLowerCase()
-        this.ataque_guerreiro = guerreiro
-        this.ataque_monje = monje
-        this.ataque_mago = mago
+        this.tipo_ataque = "shuriken"
+        this.ataquesEspecificos = {
+            guerreiro: guerreiro,
+            monge: monge,
+            mago: mago,
+            ninja: this.ataque // caso ataque outro ninja
+        };
+    }
 
-    }
-    getAtacar(tipo_heroi){
-        if (tipo_heroi === "mago"){
-            return this.ataque
-        } else if (tipo_heroi === "guerreiro"){
-            return this.ataque_guerreiro
-        } else if (tipo_heroi === "monje"){
-            return this.ataque_monje
-        } else if (tipo_heroi === "ninja"){
-            return this.ataque_ninja
-        } else { // so pra não quebrar
-            console.log("TIPO NAO RECONHECIDO!!")
-            return this.ataque
-        }
-    }
 }
 
 
@@ -244,7 +206,7 @@ class Battle{
                 for(let h2 = 0; h2<this.herois.length; h2++){
                     if (h2 != h1){   // não pode lutar contra si propio
                         this.heroi2 = this.herois[h2]
-                        console.log(`${this.heroi1.nome} vs ${this.heroi2.nome}`)
+                        console.log(`O ${this.heroi1.nome} atacou ${this.heroi2.nome} usando ${this.heroi1.tipo_ataque}`)
                         this.heroi1.setVida(this.heroi1.vida_padrao)
                         this.heroi2.setVida(this.heroi2.vida_padrao)
                         this.lutar() 
@@ -333,10 +295,10 @@ class Battle{
 
 mago = new Mago()
 guerreiro = new Guerreiro()
-monje = new Monje()
+monge = new Monge()
 ninja = new Ninja()
 
-herois = [guerreiro,mago, monje, ninja]
+herois = [guerreiro,mago, monge, ninja]
 
-batalha = new Battle(3, herois)
+batalha = new Battle(5, herois)
 batalha.iniciarBatalha()
